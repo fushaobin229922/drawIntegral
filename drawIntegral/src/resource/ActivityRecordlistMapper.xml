@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chtwm.mall.core.dao.mapper.activity.ActivityRecordlistMapper">
+	<!--  -->
+    <resultMap id="recordlistMap" type="com.chtwm.mall.pojo.activity.ActivityRecordlist">
+        <!-- 流水 -->
+        <result property="id" column="id"/>
+        <!-- 客户编号 -->
+        <result property="customerNo" column="customerNo"/>
+        <!-- 奖池编号 -->
+        <result property="awardid" column="awardid"/>
+         <!-- 奖项等级 -->
+        <result property="award" column="award"/>
+         <!-- 创建时间 -->
+        <result property="createtime" column="createtime"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="activityRecordlistColumns">
+	    <![CDATA[
+        id ,customerNo ,awardid ,award,createTime 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterType="com.chtwm.mall.pojo.activity.ActivityRecordlist" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO t_activity_recordlist (
+        	id ,
+        	customerNo ,
+        	awardid ,
+        	award ,
+        	createtime 
+        ) VALUES (
+        	#{id} ,
+        	#{customerNo} ,
+        	#{awardid} ,
+        	#{award},
+        	now() 
+        )
+    ]]>
+    </insert>
+    
+	<!--更新记录  -->
+    <update id="update" parameterType="com.chtwm.mall.pojo.activity.ActivityRecordlist">
+        UPDATE t_activity_recordlist 
+        <set>
+	        		createtime = now() ,
+	        	<if test="award!=null and award!=''">	
+	        		award = #{award} ,
+	        	</if>
+	        	<if test="awardid!=null and awardid!=''">	
+	        		awardid = #{awardid} ,
+	        	</if>
+	        	<if test="customerNo!=null and customerNo!=''">	
+	        		customerNo = #{customerNo} ,
+	        	</if>
+	    </set>
+        WHERE 
+	        	id = #{ id} 
+    </update>
+	
+	<!-- 通过ID、状态进行查询 -->
+	<select id="query" parameterType="com.chtwm.mall.pojo.activity.ActivityRecordlist" resultMap="recordlistMap">
+		select 
+			<include refid="activityRecordlistColumns"/>  
+		from t_activity_recordlist 
+		<where> 
+        	<if test="id != null and id != '' ">	
+        		id = #{id}
+        	</if>
+        	<if test="customerNo != null and customerNo != '' ">	
+        		and customerNo = #{customerNo}
+        	</if>
+        		
+		</where>
+		order by createtime desc
+	</select>
+	
+    
+</mapper>

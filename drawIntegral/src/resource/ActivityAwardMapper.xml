@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chtwm.mall.core.dao.mapper.activity.ActivityAwardMapper">
+	<!--  -->
+    <resultMap id="activityAwardMap" type="com.chtwm.mall.pojo.activity.ActivityAward">
+        <result property="id" column="id"/>
+         <!-- 奖项等级 -->
+        <result property="award" column="award"/>
+         <!-- 发放状态 -->
+        <result property="statu" column="statu"/>
+         <!-- 创建时间 -->
+        <result property="createTime" column="createtime"/>
+         <!-- 修改时间 -->
+        <result property="updateTime" column="updatetime"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="activityAwardColumns">
+	    <![CDATA[
+        id ,award ,statu ,createTime ,updateTime 
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterType="com.chtwm.mall.pojo.activity.ActivityAward" useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+        INSERT INTO t_activity_award (
+        	id ,
+        	award ,
+        	statu ,
+        	createTime ,
+        	updateTime 
+        ) VALUES (
+        	#{id} ,
+        	#{award} ,
+        	#{statu} ,
+        	now(),
+        	now() 
+        )
+    ]]>
+    </insert>
+    
+	<!--更新记录  -->
+    <update id="update" parameterType="com.chtwm.mall.pojo.activity.ActivityAward">
+        UPDATE t_activity_award 
+        <set>
+	        		updateTime = now() ,
+	        	<if test="statu!=null and statu!=''">	
+	        		statu = #{statu} ,
+	        	</if>
+	        	<if test="award!=null and award!=''">	
+	        		award = #{award} ,
+	        	</if>
+	    </set>
+        WHERE 
+	        	id = #{ id} 
+    </update>
+	
+	<!-- 通过ID、状态进行查询 -->
+	<select id="query" parameterType="com.chtwm.mall.pojo.activity.ActivityAward" resultMap="activityAwardMap">
+		select 
+			<include refid="activityAwardColumns"/>  
+		from t_activity_award 
+		<where> 
+        	<if test="id != null and id != '' ">	
+        		id = #{id}
+        	</if>
+        	<if test="statu != null and statu != '' ">	
+        		and statu = #{statu}
+        	</if>
+		</where>
+	</select>
+	
+    
+</mapper>
